@@ -38,8 +38,11 @@ router.post("/register", async (req, res) => {
 //        const 
 //     }
 // }
+//POST Create a post /collections/api/user/newPost Jordan
 
-//POST Create about me profile /collections/api/user/createProfile Jordan
+
+
+//PUT Create about me profile /collections/api/user/createProfile Jordan
     router.put("/allUsers/createProfile", async (req, res) =>{
         try {
             
@@ -57,7 +60,7 @@ router.post("/register", async (req, res) => {
         }
     })
 
-//POST Create a post /collections/api/user/newPost Jordan
+
 
 
 //PUT edit profile of currently logged in user	/collections/api/user/profile Giancarlo
