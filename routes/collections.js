@@ -10,10 +10,10 @@ const { Post, validatePost } = require("../models/post");
 
 
 //POST Create a user 	/collections/api/register
-router.post("/api/collections/register", async (req, res) => {
+router.post("/register", async (req, res) => {
     try{
         const { error } = validateUser(req.body);
-        if (error) return res.status(400).send(error.details[0].message);
+        if (error) return res.status(400).send(error);
 
         let user = await User.findOne ({ email: req.body.email });
         if (user) return res.status(400).send('User already registered.');
@@ -46,3 +46,6 @@ router.post("/api/collections/register", async (req, res) => {
 
 
 //DELETE Deletes a currently logged in user's posts /collections/api/delete/post
+
+
+module.exports = router;
