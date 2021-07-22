@@ -10,7 +10,7 @@ const { Post, validatePost } = require("../models/post");
 
 
 //POST Create a user 	/collections/api/register
-router.post("/api/collections/register", async (req, res) => {
+router.post("/register", async (req, res) => {
     try{
         const { error } = validateUser(req.body);
         if (error) return res.status(400).send(error.details[0].message);
