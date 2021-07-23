@@ -86,10 +86,29 @@ router.post("/register", async (req, res) => {
 
 
 //DELETE Delete currently logged in user account /collections/api/delete/user Giancarlo
+router.delete('/user/:id/deleteAccount', async (req, res) => {    
+    try {
+        const user = await User.findByIdAndRemove(req.params.id);
+        if (!user)
+            return res.status(400).send(`The user with email "${req.params.email}" does not exist.`);
+        return res.send(user);
+        } catch (ex) {
+            return res.status(500).send(`Internal Server Error: ${ex}`);
+        }
+    });
 
 
 //DELETE Deletes a currently logged in user's posts /collections/api/delete/post Giancarlo
-
+router.delete('/user/posts/:postId/deletePost', async (req, res) => {    
+    try {
+        const post = await Post.findByIdAndRemove(req.params.postId);
+        if (!post)
+            return res.status(400).send(`The user with email "${req.params.postId}" does not exist.`);
+        return res.send(post);
+        } catch (ex) {
+            return res.status(500).send(`Internal Server Error: ${ex}`);
+        }
+    });
 
 
 
