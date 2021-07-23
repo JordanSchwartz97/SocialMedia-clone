@@ -43,46 +43,63 @@ router.post("/register", async (req, res) => {
             password: req.body.password,
         });
         await user.save();
-        return res.send({_id: user._id, name: user.name, email: user.email});
+        return res.send({_id: user._id, name: user.name, email: user.email}); 
     } catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 });
 
+// PUT Add a friend to currently logged in user	 user/friendrequest Jordan
 router.put("/user/friendrequest"), async (req,res) => {
     try {
-        let user = await user.findOne ({ email: req.body.email});
+        let user = await User.findOne ({ email: req.body.email});
         if (!user) return res.status(400).send('User does not exist.');
 
         user.listFriends = req.body.listFriends;
         
         await user.save();
         return res.send(user); 
-    
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }
 }
 
 
+//PUT Create a post /collections/api/user/newPost Jordan
+//     router.post("/user/newPost"), async (req, res) => {
+//     try {
+//         let user = await User.findOne ({ email: req.body.email});
+//         if (!user) return res.status(400).send(`User does not exist.`)
 
-//PUT Create about me profile /collections/api/user/createProfile Jordan
-    router.put("/allUsers/createProfile", async (req, res) =>{
-        try {
-            
-            // if (error) return res.status(400).send(error);
+//         const {error} = validatePost(req.body);
+//         if (error) return res.status(400).send(error);
 
-            let user = await User.findOne ({ email: req.body.email });
-            if (!user) return res.status(400).send('User not registered.');
+        
+//         const post = new Post({
+//             text: req.body.text,
+//         });
+//         user.post.push(post)
+//         await user.save();
+//         return res.send(user.post);
+//     }   catch (ex) {
+//         return res.status(500).send(`Internal Server Error: ${ex}`);
+//     }
+// }
 
-            user.aboutMe = req.body.aboutMe;
+// PUT Create about me profile /collections/api/user/createProfile Jordan
+    // router.put("/allUsers/createProfile", async (req, res) =>{
+    //     try {
+    //         let user = await User.findOne ({ email: req.body.email });
+    //         if (!user) return res.status(400).send('User does not exist.');
 
-            await user.save();
-            return res.send(user)
-        } catch (ex) {
-            return res.status(500).send(`Internal Server Error: ${ex}`);
-        }
-    })
+    //         user.aboutMe = req.body.aboutMe;
+
+    //         await user.save();
+    //         return res.send(user)
+    //     } catch (ex) {
+    //         return res.status(500).send(`Internal Server Error: ${ex}`);
+    //     }
+    // )
 
 
 
