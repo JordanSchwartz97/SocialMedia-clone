@@ -3,7 +3,7 @@ const router = express.Router();
 const { User, validateUser } = require("../models/user");
 const { Post, validatePost } = require("../models/post");
 
-//GET Return all user data  /collections/api/user Kevin
+//GET Return all user data *WORKING*
 
 router.get("/allUsers", async (req, res) =>{
     try{
@@ -16,9 +16,18 @@ router.get("/allUsers", async (req, res) =>{
     
 })
 
+//GET Returns specific user data *WORKING*
+router.get("/user/:userId", async (req, res) =>{
+    try {
+        const user = await User.findById(req.params.userId);
+        return res.send(user);
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+})
 
-//GET Returns all posts 	 /collections/api/posts Kevin
 
+//GET Returns all posts *WORKING*	 
 router.get("/allPosts" , async (req,res)=>{ 
     try{
         const post = await Post.find();
@@ -28,7 +37,7 @@ router.get("/allPosts" , async (req,res)=>{
     }
 })
 
-//POST Create a user 	/collections/api/register
+//POST Create a user *WORKING*
 router.post("/register", async (req, res) => {
     try{
         const { error } = validateUser(req.body);
@@ -49,65 +58,58 @@ router.post("/register", async (req, res) => {
     }
 });
 
-// PUT Add a friend to currently logged in user	 user/friendrequest Jordan
-router.put("/user/friendrequest"), async (req,res) => {
+// PUT Add a friend to currently logged in user	*WORKING* 
+router.put("/user/friends/:userId/:friendId", async (req,res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) return res.status(400).send('User does not exist.');
+        const friend = await User.findById(req.params.friendId);
+        if (!friend) return res.status(400).send('User does not exist.');
+
+        user.listFriends.push(req.params.friendId)
+
+        await user.save();
+        return res.send('Friend has been added to friendlist.')
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error ${ex}`);
+    }});
+
+
+//POST Create a post *WORKING*
+    router.post("/user/newPost", async (req, res) => {
     try {
         let user = await User.findOne ({ email: req.body.email});
-        if (!user) return res.status(400).send('User does not exist.');
+        if (!user) return res.status(400).send(`User does not exist.`)
+        //* ASK ABOUT VALIDATION IT WAS BREAKING OUR PUT REQUESTS SAYING THAT EMAIL WASN'T ALLOWED*
+        // const {error} = validatePost(req.body);
+        // if (error) return res.status(400).send(error);
 
-        user.listFriends = req.body.listFriends;
         
+        const post = new Post({
+            text: req.body.text,
+        });
+        user.post.push(post)
         await user.save();
-        return res.send(user); 
+        return res.send(user.post);
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-}
+    }});
 
+// PUT Create about me profile *WORKING*
+    router.put("/allUsers/createProfile", async (req, res) =>{
+        try {
+            let user = await User.findOne ({ email: req.body.email });
+            if (!user) return res.status(400).send('User does not exist.');
 
-//PUT Create a post /collections/api/user/newPost Jordan
-//     router.post("/user/newPost"), async (req, res) => {
-//     try {
-//         let user = await User.findOne ({ email: req.body.email});
-//         if (!user) return res.status(400).send(`User does not exist.`)
+            user.aboutMe = req.body.aboutMe;
 
-//         const {error} = validatePost(req.body);
-//         if (error) return res.status(400).send(error);
+            await user.save();
+            return res.send(user)
+        } catch (ex) {
+            return res.status(500).send(`Internal Server Error: ${ex}`);
+        }});
 
-        
-//         const post = new Post({
-//             text: req.body.text,
-//         });
-//         user.post.push(post)
-//         await user.save();
-//         return res.send(user.post);
-//     }   catch (ex) {
-//         return res.status(500).send(`Internal Server Error: ${ex}`);
-//     }
-// }
-
-// PUT Create about me profile /collections/api/user/createProfile Jordan
-    // router.put("/allUsers/createProfile", async (req, res) =>{
-    //     try {
-    //         let user = await User.findOne ({ email: req.body.email });
-    //         if (!user) return res.status(400).send('User does not exist.');
-
-    //         user.aboutMe = req.body.aboutMe;
-
-    //         await user.save();
-    //         return res.send(user)
-    //     } catch (ex) {
-    //         return res.status(500).send(`Internal Server Error: ${ex}`);
-    //     }
-    // )
-
-
-
-
-//PUT edit profile of currently logged in user	/collections/api/user/profile Giancarlo
-
-
-//DELETE Delete currently logged in user account /collections/api/delete/user Giancarlo
+//DELETE Delete currently logged in user account *WORKING*
 router.delete('/user/:id/deleteAccount', async (req, res) => {    
     try {
         const user = await User.findByIdAndRemove(req.params.id);
@@ -120,7 +122,7 @@ router.delete('/user/:id/deleteAccount', async (req, res) => {
     });
 
 
-//DELETE Deletes a currently logged in user's posts /collections/api/delete/post Giancarlo
+//DELETE Deletes a currently logged in user's posts *WORKING*
 router.delete('/user/posts/:postId/deletePost', async (req, res) => {    
     try {
         const post = await Post.findByIdAndRemove(req.params.postId);
