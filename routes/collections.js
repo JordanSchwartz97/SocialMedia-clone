@@ -5,9 +5,28 @@ const { Post, validatePost } = require("../models/post");
 
 //GET Return all user data  /collections/api/user Kevin
 
+router.get("/allUsers", async (req, res) =>{
+    try{
+        const user = await User.find();
+        return res.send(user);
+
+    }catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+    
+})
+
 
 //GET Returns all posts 	 /collections/api/posts Kevin
 
+router.get("/allPosts" , async (req,res)=>{ 
+    try{
+        const post = await Post.find();
+        return res.send(post);
+    } catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+})
 
 //POST Create a user 	/collections/api/register
 router.post("/register", async (req, res) => {
@@ -92,6 +111,8 @@ router.put("/user/friendrequest"), async (req,res) => {
 
 
 //DELETE Deletes a currently logged in user's posts /collections/api/delete/post Giancarlo
+
+
 
 
 module.exports = router;
