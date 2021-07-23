@@ -49,15 +49,20 @@ router.post("/register", async (req, res) => {
     }
 });
 
-//POST Add a friend to currently logged in user	 user/friendrequest Jordan
-// router.post("/user/friendrequest"), async (req,res) => {
-//     try {
-//        const { error } = validateUser(req.body);
-//        if (error) return res.status(400).send(error);
-//        const 
-//     }
-// }
-//POST Create a post /collections/api/user/newPost Jordan
+router.put("/user/friendrequest"), async (req,res) => {
+    try {
+        let user = await user.findOne ({ email: req.body.email});
+        if (!user) return res.status(400).send('User does not exist.');
+
+        user.listFriends = req.body.listFriends;
+        
+        await user.save();
+        return res.send(user); 
+    
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+}
 
 
 
