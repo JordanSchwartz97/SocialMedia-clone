@@ -43,7 +43,7 @@ router.post("/register", async (req, res) => {
             password: req.body.password,
         });
         await user.save();
-        return res.send({_id: user._id, name: user.name, email: user.email});
+        return res.send({_id: user._id, name: user.name, email: user.email}); 
     } catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }
