@@ -15,11 +15,12 @@ const userSchema = new mongoose.Schema({
     profileImage: {type: String, default:`no photo`},
     aboutMe: {type: String,default: `I like Soccer`, minlength: 10, maxlength: 100},
     listFriends: {type: [String], default: []},
-    pendingRequests: {type: [String], default: []}
+    pendingRequests: {type: [String], default: []},
+    isAdmin: { type: Boolean, default: false },
 });
 
 userSchema.methods.generateAuthToken = function () {
-    return jwt.sign({_id: this._id, name: this.name }, config.get('jwtSecret'));
+    return jwt.sign({_id: this._id, name: this.name, isAdmin: this.isAdmin  }, config.get('jwtSecret'));
 };
 
 const User = mongoose.model("User", userSchema)

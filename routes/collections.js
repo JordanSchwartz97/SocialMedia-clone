@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const { User, validateUser } = require("../models/user");
 const { Post, validatePost } = require("../models/post");
+const auth = require('../middleware/auth');
 
 
 //GET Return all user data *WORKING*
@@ -19,7 +20,7 @@ router.get("/allUsers", async (req, res) =>{
 })
 
 //GET Returns specific user data *WORKING*
-router.get("/user/:userId", async (req, res) =>{
+router.get("/user/:userId",  async (req, res) =>{
     try {
         const user = await User.findById(req.params.userId);
         return res.send(user);
@@ -30,7 +31,7 @@ router.get("/user/:userId", async (req, res) =>{
 
 
 //GET Returns all posts *WORKING*	 
-router.get("/allPosts" , async (req,res)=>{ 
+router.get("/allPosts",  async (req,res)=>{ 
     try{
         const post = await Post.find();
         return res.send(post);
@@ -66,8 +67,21 @@ router.post("/register", async (req, res) => {
     }
 });
 
+// PUT Add a user as an admin *WORKING*
+router.put("/allUsers/changePrivileges",  async (req, res) =>{
+    try {
+        let user = await User.findOne ({ email: req.body.email });
+        if (!user) return res.status(400).send('User does not exist.');
+
+        user.isAdmin = req.body.isAdmin;
+        await user.save();
+        return res.send(user)
+    } catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }});
+
 // PUT Add a friend to currently logged in user	*WORKING* 
-router.put("/user/friends/:userId/:friendId", async (req,res) => {
+router.put("/user/friends/:userId/:friendId", auth, async (req,res) => {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send('User does not exist.');
@@ -84,7 +98,7 @@ router.put("/user/friends/:userId/:friendId", async (req,res) => {
 
 
 //POST Create a post *WORKING*
-    router.post("/user/newPost", async (req, res) => {
+    router.post("/user/newPost", auth, async (req, res) => {
     try {
         let user = await User.findOne ({ email: req.body.email});
         if (!user) return res.status(400).send(`User does not exist.`)
@@ -104,7 +118,7 @@ router.put("/user/friends/:userId/:friendId", async (req,res) => {
     }});
 
 // PUT Create about me profile *WORKING*
-    router.put("/allUsers/createProfile", async (req, res) =>{
+    router.put("/allUsers/createProfile", auth,  async (req, res) =>{
         try {
             let user = await User.findOne ({ email: req.body.email });
             if (!user) return res.status(400).send('User does not exist.');
@@ -118,7 +132,7 @@ router.put("/user/friends/:userId/:friendId", async (req,res) => {
         }});
 
 //DELETE Delete currently logged in user account *WORKING*
-router.delete('/user/:id/deleteAccount', async (req, res) => {    
+router.delete('/user/:id/deleteAccount', auth, async (req, res) => {    
     try {
         const user = await User.findByIdAndRemove(req.params.id);
         if (!user)
@@ -131,7 +145,7 @@ router.delete('/user/:id/deleteAccount', async (req, res) => {
 
 
 //DELETE Deletes a currently logged in user's posts *WORKING*
-router.delete('/user/posts/:postId/deletePost', async (req, res) => {    
+router.delete('/user/posts/:postId/deletePost', auth, async (req, res) => {    
     try {
         const post = await Post.findByIdAndRemove(req.params.postId);
         if (!post)
