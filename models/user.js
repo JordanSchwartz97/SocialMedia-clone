@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const Joi = require('joi');
 const { postSchema } = require("../models/post");
 
+
+
 const userSchema = new mongoose.Schema({
     name: {type: String, required: true, minlength: 4, maxlength: 30},
     email: {type: String, required: true, minlength: 1, maxlength: 30},
