@@ -23,7 +23,6 @@ router.post('/', async (req, res) => {
     }
     });
 
-
 function validateLogin(req) {
     const schema = Joi.object({
         email: Joi.string().min(1).max(30).required().email(),
