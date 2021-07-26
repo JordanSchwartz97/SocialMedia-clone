@@ -3,8 +3,7 @@ const express = require("express");
 const router = express.Router();
 const { User, validateUser } = require("../models/user");
 const { Post, validatePost } = require("../models/post");
-const jwt = require('jsonwebtoken');
-const config = require('config');
+
 
 //GET Return all user data *WORKING*
 
@@ -57,10 +56,7 @@ router.post("/register", async (req, res) => {
         });
         await user.save();
 
-        const token = jwt.sign(
-            { _id: user._id, name: user.name },
-            config.get('jwtSecret')
-            );
+        const token = user.generateAuthToken();
              return res
              .header('x-auth-token', token)
              .header('access-control-expose-headers', 'x-auth-token')

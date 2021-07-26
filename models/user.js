@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const Joi = require('joi');
 const { postSchema } = require("../models/post");
+const config = require("config");
+const jwt = require('jsonwebtoken');
 
 
 
@@ -15,6 +17,10 @@ const userSchema = new mongoose.Schema({
     listFriends: {type: [String], default: []},
     pendingRequests: {type: [String], default: []}
 });
+
+userSchema.methods.generateAuthToken = function () {
+    return jwt.sign({_id: this._id, name: this.name }, config.get('jwtSecret'));
+};
 
 const User = mongoose.model("User", userSchema)
 
