@@ -4,6 +4,7 @@ const router = express.Router();
 const { User, validateUser } = require("../models/user");
 const { Post, validatePost } = require("../models/post");
 const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 
 
 //GET Return all user data *WORKING*
@@ -67,6 +68,8 @@ router.post("/register", async (req, res) => {
     }
 });
 
+// POST request to login an existing user
+
 // PUT Add a user as an admin *WORKING*
 router.put("/allUsers/changePrivileges",  async (req, res) =>{
     try {
@@ -80,8 +83,8 @@ router.put("/allUsers/changePrivileges",  async (req, res) =>{
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }});
 
-// PUT Add a friend to currently logged in user	*WORKING* 
-router.put("/user/friends/:userId/:friendId", auth, async (req,res) => {
+/* PUT Add a friend to currently logged in user	*WORKING* 
+router.put("/user/friends/:userId/:friendId", [auth,admin], async (req,res) => {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) return res.status(400).send('User does not exist.');
@@ -95,7 +98,28 @@ router.put("/user/friends/:userId/:friendId", auth, async (req,res) => {
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error ${ex}`);
     }});
+*/
 
+// PUT Add a friend to currently logged in user	*WORKING* 
+router.put("/user/addFriends/:email", auth, async (req,res) => {
+    try {
+        //id = token.getItem(_id)
+       // const user = await User.findById(req.params.userId);
+       // if (!user) return res.status(400).send('User does not exist.');
+        let friend = await  User.findOne ({ email: req.params.email });
+        if (!friend) return res.status(400).send('User does not exist.');
+        //ask how to reference currently logged in user. 
+        
+
+        //user.listFriends.push(friend._Id)
+
+        //await user.save();
+
+        
+        return res.send('Friend has been added to friendlist.')
+    }   catch (ex) {
+        return res.status(500).send(`Internal Server Error ${ex}`);
+    }});
 
 //POST Create a post *WORKING*
     router.post("/user/newPost", auth, async (req, res) => {
