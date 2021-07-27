@@ -70,6 +70,29 @@ router.post("/register", async (req, res) => {
 
 // POST request to login an existing user
 
+router.post("/login", auth, async (req, res) => {
+    /*try{
+        // let user = await User.findById(req.user._id);
+        //let passwordHash = user.password;
+        //const salt = await bcrypt.genSalt(10);
+        
+        user = new User({
+            name: req.body.name,
+            email: req.body.email,
+            password: await bcrypt.hash(req.body.password, salt),
+        });
+        await user.save();
+
+        const token = user.generateAuthToken();
+             return res
+             .header('x-auth-token', token)
+             .header('access-control-expose-headers', 'x-auth-token')
+             .send({ _id: user._id, name: user.name, email: user.email });
+    } catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }*/
+});
+
 // PUT Add a user as an admin *WORKING*
 router.put("/allUsers/changePrivileges",  async (req, res) =>{
     try {
@@ -83,7 +106,7 @@ router.put("/allUsers/changePrivileges",  async (req, res) =>{
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }});
 
-/* PUT Add a friend to currently logged in user	*WORKING* 
+/* PUT Add a friend to currently logged in user	*OLD* 
 router.put("/user/friends/:userId/:friendId", [auth,admin], async (req,res) => {
     try {
         const user = await User.findById(req.params.userId);
@@ -106,14 +129,17 @@ router.put("/user/addFriends/:email", auth, async (req,res) => {
         //id = token.getItem(_id)
        // const user = await User.findById(req.params.userId);
        // if (!user) return res.status(400).send('User does not exist.');
+        let user = await User.findById(req.user._id);
+        //dont need to verify since it did that on the auth
+
         let friend = await  User.findOne ({ email: req.params.email });
         if (!friend) return res.status(400).send('User does not exist.');
         //ask how to reference currently logged in user. 
-        
+        //res.send(req.user._id);
 
-        //user.listFriends.push(friend._Id)
+        user.listFriends.push(friend._id)
 
-        //await user.save();
+        await user.save();
 
         
         return res.send('Friend has been added to friendlist.')
