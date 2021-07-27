@@ -68,30 +68,7 @@ router.post("/register", async (req, res) => {
     }
 });
 
-// POST request to login an existing user
 
-router.post("/login", auth, async (req, res) => {
-    /*try{
-        // let user = await User.findById(req.user._id);
-        //let passwordHash = user.password;
-        //const salt = await bcrypt.genSalt(10);
-        
-        user = new User({
-            name: req.body.name,
-            email: req.body.email,
-            password: await bcrypt.hash(req.body.password, salt),
-        });
-        await user.save();
-
-        const token = user.generateAuthToken();
-             return res
-             .header('x-auth-token', token)
-             .header('access-control-expose-headers', 'x-auth-token')
-             .send({ _id: user._id, name: user.name, email: user.email });
-    } catch (ex) {
-        return res.status(500).send(`Internal Server Error: ${ex}`);
-    }*/
-});
 
 // PUT Add a user as an admin *WORKING*
 router.put("/allUsers/changePrivileges",  async (req, res) =>{
