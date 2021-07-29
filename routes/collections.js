@@ -125,16 +125,17 @@ router.put("/user/sendFriendRequest/:email", auth, async (req,res) => {
     }});
 
 // PUT Accepts request from a friend and adds friend to friend list.
-router.put("/user/addFriend/:friendId"), auth,async (req,res) => {
+router.get("/user/addFriends/:friendId"),  async (req,res) => {
     try{
-        let user = await User.findById(req.user._id);
+        //let user = await User.findById(req.user._id);
+        res.send(req.params.friendId);
 
-        user.pendingRequests = user.pendingRequests.filter((id)=>
-        id != req.params.friendId)
+        //user.pendingRequests = user.pendingRequests.filter((id)=>
+        //id != req.params.friendId)
 
-        user.listFriends.push(req.params.friendId)
+        //user.listFriends.push(req.params.friendId)
 
-        await user.save();
+        //await user.save();
         return res.send(`friend has been added to your friend's list`)
         
     } catch (ex) {
@@ -142,6 +143,27 @@ router.put("/user/addFriend/:friendId"), auth,async (req,res) => {
     }
         
 }
+
+//this is the add a friend endPoint *fix path names*
+router.put("/test/:testId", auth, async (req,res)=>{ 
+    try{
+
+        
+        let user = await User.findById(req.user._id);
+        user.pendingRequests =  user.pendingRequests.filter(function(id){
+           return id != req.params.testId;
+       });
+ 
+        user.listFriends.push(req.params.testId)
+
+        await user.save();
+        return res.send(user)
+        
+    } catch (ex) {
+        return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+})
+
 
 //POST Create a post *WORKING*
     router.post("/user/newPost", auth, async (req, res) => {
