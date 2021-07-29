@@ -100,8 +100,8 @@ router.put("/user/friends/:userId/:friendId", [auth,admin], async (req,res) => {
     }});
 */
 
-// PUT Add a friend to currently logged in user	*WORKING* 
-router.put("/user/addFriends/:email", auth, async (req,res) => {
+// PUT Sends a friend request to a user from currently logged in user	*WORKING* 
+router.put("/user/sendFriendRequest/:email", auth, async (req,res) => {
     try {
         //id = token.getItem(_id)
        // const user = await User.findById(req.params.userId);
@@ -114,15 +114,34 @@ router.put("/user/addFriends/:email", auth, async (req,res) => {
         //ask how to reference currently logged in user. 
         //res.send(req.user._id);
 
-        user.listFriends.push(friend._id)
+        friend.pendingRequests.push(user._id)
 
-        await user.save();
+        await friend.save();
 
         
-        return res.send('Friend has been added to friendlist.')
+        return res.send(`${friend.name} has recieved your friend request.`)
     }   catch (ex) {
         return res.status(500).send(`Internal Server Error ${ex}`);
     }});
+
+// PUT Accepts request from a friend and adds friend to friend list.
+router.put("/user/addFriend/:friendId"), auth,async (req,res) => {
+    try{
+        let user = await User.findById(req.user._id);
+
+        user.pendingRequests = user.pendingRequests.filter((id)=>
+        id != req.params.friendId)
+
+        user.listFriends.push(req.params.friendId)
+
+        await user.save();
+        return res.send(`friend has been added to your friend's list`)
+        
+    } catch (ex) {
+        return res.status(500).send(`Internal Server Error ${ex}`); 
+    }
+        
+}
 
 //POST Create a post *WORKING*
     router.post("/user/newPost", auth, async (req, res) => {
@@ -183,6 +202,23 @@ router.delete('/user/posts/:postId/deletePost', auth, async (req, res) => {
         }
     });
 
+//Put Updates a currently logged in user's friend list *WORKING*
+router.put('/user/removeFriend/:friendId', auth, async (req, res) => {    
+    try {
+        let user = await User.findById(req.user._id);
 
+        // const friend = await User.findById(req.params.friendId);
 
+        user.listFriends = user.listFriends.filter(req.params.friendId) //== something
+        
+        await user.save();
+
+        // if (!user)
+        //     return res.status(400).send(`The user with id "${req.params.friendId}" does not exist.`);
+        // return res.send(user);
+        } catch (ex) {
+            return res.status(500).send(`Internal Server Error: ${ex}`);
+        }
+    });
 module.exports = router;
+
