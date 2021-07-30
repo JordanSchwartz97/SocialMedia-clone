@@ -69,7 +69,6 @@ router.post("/register", async (req, res) => {
 });
 
 
-
 // PUT Add a user as an admin *WORKING*
 router.put("/allUsers/changePrivileges",  async (req, res) =>{
     try {
@@ -83,22 +82,7 @@ router.put("/allUsers/changePrivileges",  async (req, res) =>{
         return res.status(500).send(`Internal Server Error: ${ex}`);
     }});
 
-/* PUT Add a friend to currently logged in user	*OLD* 
-router.put("/user/friends/:userId/:friendId", [auth,admin], async (req,res) => {
-    try {
-        const user = await User.findById(req.params.userId);
-        if (!user) return res.status(400).send('User does not exist.');
-        const friend = await User.findById(req.params.friendId);
-        if (!friend) return res.status(400).send('User does not exist.');
 
-        user.listFriends.push(req.params.friendId)
-
-        await user.save();
-        return res.send('Friend has been added to friendlist.')
-    }   catch (ex) {
-        return res.status(500).send(`Internal Server Error ${ex}`);
-    }});
-*/
 
 // PUT Sends a friend request to a user from currently logged in user	*WORKING* 
 router.put("/user/sendFriendRequest/:email", auth, async (req,res) => {
@@ -124,38 +108,20 @@ router.put("/user/sendFriendRequest/:email", auth, async (req,res) => {
         return res.status(500).send(`Internal Server Error ${ex}`);
     }});
 
-// PUT Accepts request from a friend and adds friend to friend list.
-router.get("/user/addFriends/:friendId"),  async (req,res) => {
-    try{
-        //let user = await User.findById(req.user._id);
-        res.send(req.params.friendId);
 
-        //user.pendingRequests = user.pendingRequests.filter((id)=>
-        //id != req.params.friendId)
-
-        //user.listFriends.push(req.params.friendId)
-
-        //await user.save();
-        return res.send(`friend has been added to your friend's list`)
-        
-    } catch (ex) {
-        return res.status(500).send(`Internal Server Error ${ex}`); 
-    }
-        
-}
 
 //this is the add a friend endPoint *fix path names*
-router.put("/test/:testId", auth, async (req,res)=>{ 
+router.put("/user/addFriend/:friendId", auth, async (req,res)=>{ 
     try{
 
         
         let user = await User.findById(req.user._id);
         user.pendingRequests =  user.pendingRequests.filter(function(id){
-           return id != req.params.testId;
+           return id != req.params.friendId;
        });
  
-        user.listFriends.push(req.params.testId)
-
+        user.listFriends.push(req.params.friendId)
+        
         await user.save();
         return res.send(user)
         
