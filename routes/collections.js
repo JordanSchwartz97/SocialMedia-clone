@@ -132,9 +132,10 @@ router.put("/user/addFriend/:friendId", auth, async (req,res)=>{
 
 
 //POST Create a post *WORKING*
-    router.post("/user/newPost", auth, async (req, res) => {
+    router.post("/user/newPost/:userId", async (req, res) => {
     try {
-        let user = await User.findOne ({ email: req.body.email});
+        let user = await User.findById(req.params.userId);
+        
         if (!user) return res.status(400).send(`User does not exist.`)
         //* ASK ABOUT VALIDATION IT WAS BREAKING OUR PUT REQUESTS SAYING THAT EMAIL WASN'T ALLOWED*
         // const {error} = validatePost(req.body);
@@ -143,6 +144,7 @@ router.put("/user/addFriend/:friendId", auth, async (req,res)=>{
         
         const post = new Post({
             text: req.body.text,
+            email: user.email
         });
         user.post.push(post)
         await user.save();
