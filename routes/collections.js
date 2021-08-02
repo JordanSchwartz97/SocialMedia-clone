@@ -84,7 +84,7 @@ router.put("/allUsers/changePrivileges",  async (req, res) =>{
 
 
 
-// PUT Sends a friend request to a user from currently logged in user	*WORKING* 
+// PUT Sends a friend request to a user from currently logged in user email is the recipient of the req.	*WORKING* 
 router.put("/user/sendFriendRequest/:email", auth, async (req,res) => {
     try {
         //id = token.getItem(_id)
